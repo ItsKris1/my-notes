@@ -1,7 +1,7 @@
 ## Project description
 Notes web application under development.
 
-This projects purpose is to learn more React while bringing two new technologies(ones I havent worked with): TypeScript and Google's Firebase.
+This projects purpose is to get better at React while learning two new technologies(ones I havent worked with): TypeScript and Google's Firebase.
 
 ### Features
 This project is not ready. 
