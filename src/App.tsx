@@ -7,6 +7,7 @@ interface Note {
   title: string;
   body: string;
   selected: boolean;
+  created: string;
 }
 
 type Notes = Note[];
@@ -57,6 +58,7 @@ function App() {
       await addDoc(collection(db, "notes"), {
         title,
         body,
+        created: new Date().toLocaleString(),
       });
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -148,6 +150,8 @@ function App() {
                   <br></br>
 
                   <p onDoubleClick={(e) => setEditingBodyId(note.id)}>{note.body}</p>
+                  <br></br>
+                  <p>{note.created}</p>
                   <input type="checkbox" checked={note.selected} onChange={() => handleNoteSelected(note.id)}></input>
                 </div>
               </li>
