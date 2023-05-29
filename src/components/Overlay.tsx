@@ -6,7 +6,6 @@ export function Overlay({ children, onModalClose }: PropsWithChildren<{ onModalC
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (childrenRef.current && !childrenRef.current.contains(e.target as Node)) {
-        console.log("Close modal");
         onModalClose();
       }
     }

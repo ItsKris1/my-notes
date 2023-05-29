@@ -2,15 +2,13 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { useState } from "react";
 
-export function AddNote() {
+export function AddNote({ onSubmit }: { onSubmit: () => void }) {
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    setTitle("");
-    setBody("");
+    onSubmit();
 
     try {
       await addDoc(collection(db, "notes"), {

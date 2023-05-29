@@ -1,11 +1,17 @@
-import { NoteProps } from "../App";
 import "./Note.css";
-export function Note({ title, body, created }: NoteProps) {
+import type { Note } from "../App";
+
+type NoteProps = Note & {
+  onSelected: (id: string) => void;
+  onClick: (e: React.MouseEvent) => void;
+};
+
+export function Note({ id, title, body, created, selected, onSelected, onClick }: NoteProps) {
   return (
-    <ul className="Note">
+    <ul className="Note" onClick={onClick}>
       <li className="Note-header">
         <h3>{title}</h3>
-        <input type="checkbox" />
+        <input type="checkbox" checked={selected} onChange={() => onSelected(id)} />
       </li>
       <li>{body}</li>
       <li>{created}</li>

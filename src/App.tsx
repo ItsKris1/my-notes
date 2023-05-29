@@ -5,6 +5,7 @@ import { Note } from "./components/Note";
 import { Button } from "./components/Button";
 import { AddNote } from "./components/AddNote";
 import { Overlay } from "./components/Overlay";
+import { EditNote } from "./components/EditNote";
 
 export interface Note {
   id: string;
@@ -14,16 +15,16 @@ export interface Note {
   created: string;
 }
 
-export interface NoteProps extends Note {}
+type OverlayContent = "EDIT_NOTE" | "ADD_NOTE";
 
 type Notes = Note[];
 
 function App() {
   const [notes, setNotes] = useState<Notes>([]);
   const [selectAllNotes, setSelectAllNotes] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(true);
-  console.log("showModal", showModal);
-  // const [editingBodyId, setEditingBodyId] = useState("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [overlayContent, setOverlayContent] = useState<OverlayContent>();
+  const [editingNoteId, setEditingNoteId] = useState<string>("");
   // const editTitleRef = useRef<HTMLInputElement>(null);
   // const editBodyRef = useRef();
 
@@ -34,8 +35,6 @@ function App() {
     const unsubscribe = onSnapshot(q, (querySnapShot) => {
       const newNotes: Notes = [];
       querySnapShot.forEach((doc) => {
-        console.log("Got notes");
-
         newNotes.push({ ...(doc.data() as Note), id: doc.id, selected: false });
       });
 
@@ -45,23 +44,17 @@ function App() {
     });
   }, []);
 
-  // useEffect(() => {
-  //   if (editTitleRef.current !== null && editingTitleId) {
-  //     editTitleRef.current.focus();
-  //   }
-  // }, [editingTitleId]);
-
-  // function handleNoteSelected(noteId: string) {
-  //   setNotes(
-  //     notes.map((note) => {
-  //       if (note.id === noteId) {
-  //         return { ...note, selected: !note.selected };
-  //       } else {
-  //         return note;
-  //       }
-  //     })
-  //   );
-  // }
+  function handleNoteSelected(noteId: string) {
+    setNotes(
+      notes.map((note) => {
+        if (note.id === noteId) {
+          return { ...note, selected: !note.selected };
+        } else {
+          return note;
+        }
+      })
+    );
+  }
 
   function handleSelectedAllNotes(e: React.ChangeEvent<HTMLInputElement>) {
     setSelectAllNotes(e.target.checked);
@@ -85,13 +78,32 @@ function App() {
     setSelectAllNotes(false);
   }
 
+  function findNote(noteId: string): Note {
+    const note = notes.find((note) => note.id === noteId);
+    if (!note) {
+      throw new Error(`FindNote didnt find note. NoteID: ${noteId}`);
+    }
+
+    return note;
+  }
+
+  // if (typeof editingNoteId === "string" && editingNoteId != "") {
+
+  // }
+
   return (
     <div className="App">
       {showModal && (
         <Overlay onModalClose={() => setShowModal(false)}>
-          <div className="Note">
-            <AddNote></AddNote>
-          </div>
+          {overlayContent === "ADD_NOTE" ? (
+            <div className="Note">
+              <AddNote onSubmit={() => setShowModal(false)}></AddNote>
+            </div>
+          ) : (
+            <div className="Note">
+              <EditNote note={findNote(editingNoteId)} onSubmit={() => setShowModal(false)}></EditNote>
+            </div>
+          )}
         </Overlay>
       )}
 
@@ -116,6 +128,7 @@ function App() {
             text="New note"
             onClick={(e) => {
               e.stopPropagation();
+              setOverlayContent("ADD_NOTE");
               setShowModal(true);
             }}
           ></Button>
@@ -125,7 +138,16 @@ function App() {
       <main>
         <div className="Notes">
           {notes.map((note) => (
-            <Note {...note}></Note>
+            <Note
+              {...note}
+              onSelected={handleNoteSelected}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowModal(true);
+                setOverlayContent("EDIT_NOTE");
+                setEditingNoteId(note.id);
+              }}
+            ></Note>
           ))}
         </div>
       </main>
