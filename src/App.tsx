@@ -3,6 +3,8 @@ import { db } from "./firebase";
 import { useEffect, useRef, useState } from "react";
 import { Note } from "./components/Note";
 import { Button } from "./components/Button";
+import { AddNote } from "./components/AddNote";
+import { Overlay } from "./components/Overlay";
 
 export interface Note {
   id: string;
@@ -19,7 +21,8 @@ type Notes = Note[];
 function App() {
   const [notes, setNotes] = useState<Notes>([]);
   const [selectAllNotes, setSelectAllNotes] = useState<boolean>(false);
-
+  const [showModal, setShowModal] = useState<boolean>(true);
+  console.log("showModal", showModal);
   // const [editingBodyId, setEditingBodyId] = useState("");
   // const editTitleRef = useRef<HTMLInputElement>(null);
   // const editBodyRef = useRef();
@@ -84,26 +87,43 @@ function App() {
 
   return (
     <div className="App">
+      {showModal && (
+        <Overlay onModalClose={() => setShowModal(false)}>
+          <div className="Note">
+            <AddNote></AddNote>
+          </div>
+        </Overlay>
+      )}
+
       <header className="App-header">
         <h1>My Notes</h1>
 
-        {anyNoteSelected && (
-          <label>
-            Select all
-            <input
-              type="checkbox"
-              name="select_all"
-              checked={selectAllNotes}
-              onChange={(e) => handleSelectedAllNotes(e)}
-            />
-          </label>
+        {anyNoteSelected ? (
+          <div>
+            <label>
+              Select all
+              <input
+                type="checkbox"
+                name="select_all"
+                checked={selectAllNotes}
+                onChange={(e) => handleSelectedAllNotes(e)}
+              />
+            </label>
+            <Button onClick={handleDeletedNotes} text="Delete"></Button>
+          </div>
+        ) : (
+          <Button
+            text="New note"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowModal(true);
+            }}
+          ></Button>
         )}
-
-        {anyNoteSelected && <Button onClick={handleDeletedNotes} text="Delete"></Button>}
       </header>
 
       <main>
-        <div className="notes">
+        <div className="Notes">
           {notes.map((note) => (
             <Note {...note}></Note>
           ))}
