@@ -1,13 +1,16 @@
-import { collection, addDoc, deleteDoc, doc, query, onSnapshot } from "firebase/firestore";
-import { db } from "./firebase";
-import { useEffect, useRef, useState } from "react";
-import { Note } from "./components/Note";
-import { Button } from "./components/Button";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "./server/firebase";
+import { useState } from "react";
+import { Note } from "./components/Note/Note";
+import { Button } from "./components/Button/Button";
 import { AddNote } from "./components/AddNote";
-import { Overlay } from "./components/Overlay";
+import { Modal } from "./components/Modal/Modal";
 import { EditNote } from "./components/EditNote";
+import { ReactComponent as TrashLogo } from "./icons/trash_icon.svg";
+import { ReactComponent as PlusLogo } from "./icons/plus_icon.svg";
+import { useNotes } from "./useNote";
 
-export interface Note {
+export interface NoteData {
   id: string;
   title: string;
   body: string;
@@ -15,34 +18,19 @@ export interface Note {
   created: string;
 }
 
-type OverlayContent = "EDIT_NOTE" | "ADD_NOTE";
-
-type Notes = Note[];
+type ModalContent = "EDIT_NOTE" | "ADD_NOTE";
 
 function App() {
-  const [notes, setNotes] = useState<Notes>([]);
+  const [notes, setNotes] = useNotes();
+
   const [selectAllNotes, setSelectAllNotes] = useState<boolean>(false);
+
+  const [editingNote, setEditingNote] = useState<NoteData | null>(null);
+
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [overlayContent, setOverlayContent] = useState<OverlayContent>();
-  const [editingNoteId, setEditingNoteId] = useState<string>("");
-  // const editTitleRef = useRef<HTMLInputElement>(null);
-  // const editBodyRef = useRef();
+  const [modalContent, setModalContent] = useState<ModalContent>();
 
   const anyNoteSelected = notes.some((note) => note.selected === true);
-
-  useEffect(() => {
-    const q = query(collection(db, "notes"));
-    const unsubscribe = onSnapshot(q, (querySnapShot) => {
-      const newNotes: Notes = [];
-      querySnapShot.forEach((doc) => {
-        newNotes.push({ ...(doc.data() as Note), id: doc.id, selected: false });
-      });
-
-      setNotes(newNotes);
-
-      return () => unsubscribe();
-    });
-  }, []);
 
   function handleNoteSelected(noteId: string) {
     setNotes(
@@ -78,60 +66,54 @@ function App() {
     setSelectAllNotes(false);
   }
 
-  function findNote(noteId: string): Note {
-    const note = notes.find((note) => note.id === noteId);
-    if (!note) {
-      throw new Error(`FindNote didnt find note. NoteID: ${noteId}`);
-    }
-
-    return note;
+  function toggleShowModal() {
+    setShowModal(!showModal);
   }
-
-  // if (typeof editingNoteId === "string" && editingNoteId != "") {
-
-  // }
 
   return (
     <div className="App">
       {showModal && (
-        <Overlay onModalClose={() => setShowModal(false)}>
-          {overlayContent === "ADD_NOTE" ? (
-            <div className="Note">
-              <AddNote onSubmit={() => setShowModal(false)}></AddNote>
-            </div>
+        <Modal onModalClose={toggleShowModal}>
+          {modalContent === "ADD_NOTE" ? (
+            <AddNote onSubmit={toggleShowModal}></AddNote>
           ) : (
-            <div className="Note">
-              <EditNote note={findNote(editingNoteId)} onSubmit={() => setShowModal(false)}></EditNote>
-            </div>
+            <EditNote note={editingNote} onSubmit={toggleShowModal}></EditNote>
           )}
-        </Overlay>
+        </Modal>
       )}
 
       <header className="App-header">
-        <h1>My Notes</h1>
+        <h1 className="App-header__title">myNotes</h1>
 
         {anyNoteSelected ? (
-          <div>
+          <div className="button_menu">
             <label>
               Select all
               <input
                 type="checkbox"
+                id="select_all"
                 name="select_all"
                 checked={selectAllNotes}
                 onChange={(e) => handleSelectedAllNotes(e)}
               />
             </label>
-            <Button onClick={handleDeletedNotes} text="Delete"></Button>
+
+            <Button onClick={handleDeletedNotes} text="Delete" type="danger">
+              <TrashLogo></TrashLogo>
+            </Button>
           </div>
         ) : (
           <Button
             text="New note"
+            type="primary"
             onClick={(e) => {
               e.stopPropagation();
-              setOverlayContent("ADD_NOTE");
-              setShowModal(true);
+              setModalContent("ADD_NOTE");
+              toggleShowModal();
             }}
-          ></Button>
+          >
+            <PlusLogo></PlusLogo>
+          </Button>
         )}
       </header>
 
@@ -141,11 +123,11 @@ function App() {
             <Note
               {...note}
               onSelected={handleNoteSelected}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                setShowModal(true);
-                setOverlayContent("EDIT_NOTE");
-                setEditingNoteId(note.id);
+                toggleShowModal();
+                setModalContent("EDIT_NOTE");
+                setEditingNote(note);
               }}
             ></Note>
           ))}

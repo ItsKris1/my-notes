@@ -1,0 +1,31 @@
+.btn {
+  --primary-bg: #5b5b33;
+  --danger-bg: #c01c1c;
+  --text-color: #e9e9e9;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  border: none;
+  padding: 7.5px 15px;
+  border-radius: 20px;
+  gap: 10px;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+.btn svg {
+  height: 20px;
+  width: 20px;
+  fill: var(--text);
+}
+
+.primary {
+  background-color: var(--primary-bg);
+}
+
+.danger {
+  background-color: var(--danger-bg);
+}

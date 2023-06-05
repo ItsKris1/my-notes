@@ -1,5 +1,5 @@
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../server/firebase";
 import { useState } from "react";
 
 export function AddNote({ onSubmit }: { onSubmit: () => void }) {
@@ -24,16 +24,10 @@ export function AddNote({ onSubmit }: { onSubmit: () => void }) {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>
-          Title
-          <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
+        <input type="text" placeholder="Title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div>
-        <label>
-          Text
-          <input type="text" name="body" value={body} onChange={(e) => setBody(e.target.value)} />
-        </label>
+        <textarea name="body" placeholder="Body" value={body} onChange={(e) => setBody(e.target.value)} />
       </div>
 
       <button>Add note</button>

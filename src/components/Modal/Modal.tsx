@@ -1,6 +1,7 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
+import "./Modal.css";
 
-export function Overlay({ children, onModalClose }: PropsWithChildren<{ onModalClose: () => void }>) {
+export function Modal({ children, onModalClose }: PropsWithChildren<{ onModalClose: () => void }>) {
   const childrenRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -16,8 +17,8 @@ export function Overlay({ children, onModalClose }: PropsWithChildren<{ onModalC
   }, [onModalClose]);
 
   return (
-    <div className="Overlay">
-      <div className="children" ref={childrenRef}>
+    <div className="Modal">
+      <div className="ModalContent" ref={childrenRef}>
         {children}
       </div>
     </div>

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { doc, runTransaction } from "firebase/firestore";
-import { db } from "../firebase";
-import type { Note } from "../App";
+import { db } from "../server/firebase";
+import type { NoteData } from "../App";
 
 type EditNoteProps = {
   onSubmit: () => void;
-  note: Note;
+  note: NoteData | null;
 };
 
 export function EditNote({ note, onSubmit }: EditNoteProps) {
-  const [title, setTitle] = useState<string>(note.title);
-  const [body, setBody] = useState<string>(note.body);
+  const [title, setTitle] = useState<string>(note!.title);
+  const [body, setBody] = useState<string>(note!.body);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -19,11 +19,11 @@ export function EditNote({ note, onSubmit }: EditNoteProps) {
 
     try {
       await runTransaction(db, async (transaction) => {
-        const docRef = doc(db, "notes", note.id);
+        const docRef = doc(db, "notes", note!.id);
         const docNote = await transaction.get(docRef);
 
         if (!docNote.exists()) {
-          throw new Error(`Note: ${note.id} doesnt exist`);
+          throw new Error(`Note: ${note!.id} doesnt exist`);
         }
 
         transaction.update(docRef, { title, body });
@@ -34,17 +34,13 @@ export function EditNote({ note, onSubmit }: EditNoteProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="Edit-note-form">
       <div>
-        <label>
-          Title
-          <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
+        <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div>
         <label>
-          Text
-          <input type="text" name="body" value={body} onChange={(e) => setBody(e.target.value)} />
+          <textarea name="body" value={body} onChange={(e) => setBody(e.target.value)} />
         </label>
       </div>
 
