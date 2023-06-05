@@ -28,18 +28,6 @@ h3 {
   margin: 0;
 }
 
-input,
-textarea {
-  width: 100%;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: none;
-  background-color: transparent;
-  border: none;
-  padding: 5px;
-  border-bottom: 2px solid rgb(129, 136, 47);
-}
-
 input:focus-visible,
 textarea:focus-visible {
   outline: none;
@@ -77,18 +65,8 @@ textarea:focus-visible {
   /* padding: 20px 0 20px 0; */
 }
 
-.select_all {
-  display: flex;
-  background-color: brown;
-  padding: 10px;
-  font-family: "Open Sans", sans-serif;
-}
-
-.select_all input {
-  width: initial;
-}
-
 .button_menu {
   display: flex;
   align-items: center;
+  gap: 10px;
 }

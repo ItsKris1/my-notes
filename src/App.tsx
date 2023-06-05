@@ -87,11 +87,10 @@ function App() {
 
         {anyNoteSelected ? (
           <div className="button_menu">
-            <label>
+            <label className="btn primary">
               Select all
               <input
                 type="checkbox"
-                id="select_all"
                 name="select_all"
                 checked={selectAllNotes}
                 onChange={(e) => handleSelectedAllNotes(e)}
