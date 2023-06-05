@@ -30,20 +30,14 @@ h3 {
 
 input,
 textarea {
-  height: 100%;
   width: 100%;
   font-size: 1rem;
-  resize: none;
   font-family: inherit;
-
+  resize: none;
   background-color: transparent;
   border: none;
-  padding-bottom: 5px;
+  padding: 5px;
   border-bottom: 2px solid rgb(129, 136, 47);
-}
-
-textarea {
-  resize: none;
 }
 
 input:focus-visible,
@@ -60,6 +54,7 @@ textarea:focus-visible {
 
   margin: auto;
   padding: 40px;
+  gap: 10px;
 }
 
 .App-header {

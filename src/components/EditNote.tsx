@@ -2,6 +2,7 @@ import { useState } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "../server/firebase";
 import type { NoteData } from "../App";
+import { Button } from "./Button/Button";
 
 type EditNoteProps = {
   onSubmit: () => void;
@@ -34,17 +35,12 @@ export function EditNote({ note, onSubmit }: EditNoteProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="Edit-note-form">
-      <div>
-        <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-      </div>
-      <div>
-        <label>
-          <textarea name="body" value={body} onChange={(e) => setBody(e.target.value)} />
-        </label>
-      </div>
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
 
-      <button>Save changes</button>
+      <textarea name="body" value={body} className="Note-body" onChange={(e) => setBody(e.target.value)} />
+
+      <Button type="primary" text="Save changes" onClick={() => {}}></Button>
     </form>
   );
 }
