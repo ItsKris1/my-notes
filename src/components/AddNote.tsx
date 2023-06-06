@@ -1,4 +1,4 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../server/firebase";
 import { useState } from "react";
 import { Button } from "./Button/Button";
@@ -15,7 +15,7 @@ export function AddNote({ onSubmit }: { onSubmit: () => void }) {
       await addDoc(collection(db, "notes"), {
         title,
         body,
-        created: new Date().toLocaleString(),
+        created: serverTimestamp(),
       });
     } catch (e) {
       console.error("Error adding document: ", e);

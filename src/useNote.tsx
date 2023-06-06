@@ -11,7 +11,9 @@ export function useNotes(): [NoteData[], React.Dispatch<React.SetStateAction<Not
     const unsubscribe = onSnapshot(q, (querySnapShot) => {
       const newNotes: NoteData[] = [];
       querySnapShot.forEach((doc) => {
-        newNotes.push({ ...(doc.data() as NoteData), id: doc.id, selected: false });
+        console.log("data", doc.data().created.seconds * 1000);
+        const date = new Date(doc.data().created.seconds * 1000);
+        newNotes.push({ ...(doc.data() as NoteData), id: doc.id, selected: false, created: date.toLocaleString() });
       });
 
       setNotes(newNotes);

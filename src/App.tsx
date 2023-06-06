@@ -1,6 +1,6 @@
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "./server/firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Note } from "./components/Note/Note";
 import { Button } from "./components/Button/Button";
 import { AddNote } from "./components/AddNote";
@@ -29,6 +29,29 @@ function App() {
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>();
+
+  useEffect(() => {
+    function resizeGridItem(item: HTMLElement) {
+      if (item !== null) {
+        const grid = document.getElementsByClassName("Notes")[0];
+        const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
+        const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
+        const rowSpan = Math.ceil((item.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+        console.log("Row span", rowSpan);
+
+        item.style.gridRowEnd = "span " + rowSpan;
+      }
+    }
+
+    function resizeAllGridItems() {
+      const allItems = document.getElementsByClassName("Note");
+      for (let x = 0; x < allItems.length; x++) {
+        resizeGridItem(allItems[x] as HTMLElement);
+      }
+    }
+
+    resizeAllGridItems();
+  });
 
   const anyNoteSelected = notes.some((note) => note.selected === true);
 
