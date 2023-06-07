@@ -93,6 +93,8 @@ function App() {
     setShowModal(!showModal);
   }
 
+  function addDummyData() {}
+
   return (
     <div className="App">
       {showModal && (
@@ -125,17 +127,21 @@ function App() {
             </Button>
           </div>
         ) : (
-          <Button
-            text="New note"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              setModalContent("ADD_NOTE");
-              toggleShowModal();
-            }}
-          >
-            <PlusLogo></PlusLogo>
-          </Button>
+          <div className="button_menu">
+            <Button onClick={addDummyData} text="Add dummy data" type="primary"></Button>
+
+            <Button
+              text="New note"
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalContent("ADD_NOTE");
+                toggleShowModal();
+              }}
+            >
+              <PlusLogo></PlusLogo>
+            </Button>
+          </div>
         )}
       </header>
 
