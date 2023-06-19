@@ -93,7 +93,9 @@ function App() {
     setShowModal(!showModal);
   }
 
-  function addDummyData() {}
+  function addDummyData() {
+    alert("To be added");
+  }
 
   return (
     <div className="App">
