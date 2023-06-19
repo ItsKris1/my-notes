@@ -1,6 +1,6 @@
-import { deleteDoc, doc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "./server/firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Note } from "./components/Note/Note";
 import { Button } from "./components/Button/Button";
 import { AddNote } from "./components/AddNote";
@@ -9,6 +9,11 @@ import { EditNote } from "./components/EditNote";
 import { ReactComponent as TrashLogo } from "./icons/trash_icon.svg";
 import { ReactComponent as PlusLogo } from "./icons/plus_icon.svg";
 import { useNotes } from "./useNote";
+import { dummyNotesData } from "./dummyData";
+
+import Masonry from "react-masonry-css";
+
+//...
 
 export interface NoteData {
   id: string;
@@ -30,27 +35,25 @@ function App() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>();
 
+  const notesRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    function resizeGridItem(item: HTMLElement) {
-      if (item !== null) {
-        const grid = document.getElementsByClassName("Notes")[0];
-        const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
-        const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
-        const rowSpan = Math.ceil((item.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
-        console.log("Row span", rowSpan);
-
-        item.style.gridRowEnd = "span " + rowSpan;
-      }
-    }
-
-    function resizeAllGridItems() {
-      const allItems = document.getElementsByClassName("Note");
-      for (let x = 0; x < allItems.length; x++) {
-        resizeGridItem(allItems[x] as HTMLElement);
-      }
-    }
-
-    resizeAllGridItems();
+    // function resizeNote(item: HTMLElement) {
+    //   const grid = notesRef.current;
+    //   if (item !== null && grid !== null) {
+    //     // const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
+    //     // const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
+    //     // const rowSpan = Math.ceil((item.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+    //     // item.style.gridRowEnd = "span " + rowSpan;
+    //   }
+    // }
+    // function resizeAllNotes() {
+    //   const allItems = document.getElementsByClassName("Note");
+    //   for (let x = 0; x < allItems.length; x++) {
+    //     resizeNote(allItems[x] as HTMLElement);
+    //   }
+    // }
+    // resizeAllNotes();
   });
 
   const anyNoteSelected = notes.some((note) => note.selected === true);
@@ -94,9 +97,20 @@ function App() {
   }
 
   function addDummyData() {
-    alert("To be added");
+    dummyNotesData.forEach(async (dummyNote) => {
+      try {
+        await addDoc(collection(db, "notes"), dummyNote);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    });
   }
 
+  const breakpointColumnsObj = {
+    default: 3,
+    1700: 2,
+    1200: 1,
+  };
   return (
     <div className="App">
       {showModal && (
@@ -148,7 +162,11 @@ function App() {
       </header>
 
       <main>
-        <div className="Notes">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {notes.map((note) => (
             <Note
               {...note}
@@ -161,7 +179,22 @@ function App() {
               }}
             ></Note>
           ))}
-        </div>
+        </Masonry>
+
+        {/* <div className="Notes" ref={notesRef}>
+          {notes.map((note) => (
+            <Note
+              {...note}
+              onSelected={handleNoteSelected}
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                toggleShowModal();
+                setModalContent("EDIT_NOTE");
+                setEditingNote(note);
+              }}
+            ></Note>
+          ))}
+        </div> */}
       </main>
     </div>
   );

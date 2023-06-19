@@ -9,10 +9,10 @@ export function useNotes(): [NoteData[], React.Dispatch<React.SetStateAction<Not
   useEffect(() => {
     const q = query(collection(db, "notes"), orderBy("created"));
     const unsubscribe = onSnapshot(q, (querySnapShot) => {
-      console.log("Got data");
+      // console.log("Got data");
       const newNotes: NoteData[] = [];
       querySnapShot.forEach((doc) => {
-        console.log("Time", doc.data().created);
+        // console.log("Time", doc.data().created);
         let date;
 
         if (doc.data().created) {

@@ -1,5 +1,6 @@
 import "./Note.css";
 import type { NoteData } from "../../App";
+import { useEffect, useRef } from "react";
 
 type NoteProps = NoteData & {
   onSelected: (id: string) => void;
@@ -12,8 +13,20 @@ export function Note({ id, title, body, created, selected, onSelected, onClick }
     onSelected(id);
   }
 
+  const noteRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const rowHeight = 5;
+    const rowGap = 20;
+    if (noteRef.current !== null) {
+      const rowSpan = Math.ceil((noteRef.current.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+      noteRef.current.style.gridRowEnd = "span " + rowSpan;
+      console.log("span");
+    }
+  }, []);
+
   return (
-    <ul className="Note" onClick={onClick}>
+    <ul className="Note" onClick={onClick} ref={noteRef}>
       <li className="Note-header">
         <h3>{title}</h3>
         <input type="checkbox" checked={selected} onClick={handleClick} />
