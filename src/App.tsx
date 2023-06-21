@@ -35,26 +35,49 @@ function App() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>();
 
+  const [clientPos, setClientPos] = useState<{ x: number; y: number }>();
+
   const notesRef = useRef<HTMLDivElement>(null);
+  const [draggableNote, setDraggableNote] = useState<number>();
+  const [draggedOnNote, setDraggedOnNote] = useState<number>();
+
+  function onNoteDragStart(noteId: number) {
+    console.log("Dragging note: ", noteId);
+    setDraggableNote(noteId);
+  }
+
+  function onNoteDragEnd() {
+    console.log("dragged to", draggedOnNote);
+    if (draggableNote === draggedOnNote) {
+      return;
+    }
+
+    const draggedNote = notes[draggableNote as number];
+    const draggedOnNote1 = notes[draggedOnNote as number];
+
+    setNotes(
+      notes.map((note, index) => {
+        if (index === draggableNote) {
+          return { ...draggedOnNote1 };
+        }
+        if (index === draggedOnNote) {
+          return { ...draggedNote };
+        }
+
+        return note;
+      })
+    );
+  }
 
   useEffect(() => {
-    // function resizeNote(item: HTMLElement) {
-    //   const grid = notesRef.current;
-    //   if (item !== null && grid !== null) {
-    //     // const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
-    //     // const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
-    //     // const rowSpan = Math.ceil((item.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
-    //     // item.style.gridRowEnd = "span " + rowSpan;
-    //   }
+    // const fn = (e: DragEvent) => console.log(e);
+    // if (document !== null) {
+    //   document.addEventListener("dragover", (e: DragEvent) => {
+    //     setClientPos({ x: e.clientX, y: e.clientY });
+    //   });
     // }
-    // function resizeAllNotes() {
-    //   const allItems = document.getElementsByClassName("Note");
-    //   for (let x = 0; x < allItems.length; x++) {
-    //     resizeNote(allItems[x] as HTMLElement);
-    //   }
-    // }
-    // resizeAllNotes();
-  });
+    // return () => document.removeEventListener("dragover", fn);
+  }, []);
 
   const anyNoteSelected = notes.some((note) => note.selected === true);
 
@@ -167,7 +190,7 @@ function App() {
           className="my-masonry-grid"
           columnClassName="my-masonry-grid_column"
         >
-          {notes.map((note) => (
+          {notes.map((note, index) => (
             <Note
               {...note}
               onSelected={handleNoteSelected}
@@ -177,6 +200,11 @@ function App() {
                 setModalContent("EDIT_NOTE");
                 setEditingNote(note);
               }}
+              clientPos={clientPos}
+              onDragStart={onNoteDragStart}
+              onDragOver={(index: number) => setDraggedOnNote(index)}
+              onDragEnd={onNoteDragEnd}
+              index={index}
             ></Note>
           ))}
         </Masonry>
