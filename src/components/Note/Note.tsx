@@ -8,7 +8,7 @@ type NoteProps = NoteData & {
   clientPos: { x: number; y: number } | undefined;
   onDragStart: (id: number) => void;
   onDragOver: (id: number) => void;
-  onDragEnd: () => void;
+  onDrop: (id1: number, id2: number) => void;
   index: number;
 };
 
@@ -23,7 +23,7 @@ export function Note({
 
   onDragStart,
   onDragOver,
-  onDragEnd,
+  onDrop,
   index,
 }: NoteProps) {
   function handleClick(e: React.MouseEvent) {
@@ -33,7 +33,8 @@ export function Note({
 
   const noteRef = useRef<HTMLUListElement>(null);
 
-  function handleDragStart(noteTitle: string) {
+  function handleDragStart(e: React.DragEvent) {
+    e.dataTransfer.setData("text/plain", String(index));
     // console.log("Started dragging: ", noteTitle);
   }
   function handleDragEnter(noteTitle: string) {
@@ -59,10 +60,17 @@ export function Note({
       className="Note"
       onClick={onClick}
       ref={noteRef}
+      onDragStart={handleDragStart}
+      onDragOver={(e) => { console.log("dragging over note") }}
+      onDrop={(e) => {
+        e.preventDefault();
+        const noteDragged = e.dataTransfer.getData("text/plain");
+        console.log("Dropped on note: ", title)
+        console.log("Dragged note: ", noteDragged);
+
+        onDrop(Number(noteDragged), index);
+      }}
       draggable
-      onDragStart={(e) => onDragStart(index)}
-      onDragEnd={(e) => onDragEnd()}
-      onDragOver={(e) => onDragOver(index)}
       style={styleObj}
     >
       <li className="Note-header">

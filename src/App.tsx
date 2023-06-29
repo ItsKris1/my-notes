@@ -46,21 +46,24 @@ function App() {
     setDraggableNote(noteId);
   }
 
-  function onNoteDragEnd() {
-    console.log("dragged to", draggedOnNote);
-    if (draggableNote === draggedOnNote) {
-      return;
-    }
+  function onNoteDragEnd(draggedIndex: number, draggedToIndex: number) {
+    console.log("dragged to", draggedToIndex);
+    // if (draggableNote === draggedOnNote) {
+    //   return;
+    // }
 
-    const draggedNote = notes[draggableNote as number];
-    const draggedOnNote1 = notes[draggedOnNote as number];
+    const draggedNote = notes[draggedIndex];
+    const draggedToNote = notes[draggedToIndex];
+
+    console.log("draggedNote", draggedNote);
+    console.log("draggedToNote", draggedToNote);
 
     setNotes(
       notes.map((note, index) => {
-        if (index === draggableNote) {
-          return { ...draggedOnNote1 };
+        if (index === draggedIndex) {
+          return { ...draggedToNote };
         }
-        if (index === draggedOnNote) {
+        if (index === draggedToIndex) {
           return { ...draggedNote };
         }
 
@@ -134,6 +137,28 @@ function App() {
     1700: 2,
     1200: 1,
   };
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    let elem: Element = e.target as Element;
+
+    // if dragging over a non relevant column change pointer style
+    if (elem.classList.contains("my-masonry-grid_column")) {
+      e.dataTransfer.dropEffect = "none";
+    } else {
+      e.dataTransfer.dropEffect = "move";
+
+    }
+  }
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+
+
+    console.log("Dropped: ", e);
+  }
+
+
+
   return (
     <div className="App">
       {showModal && (
@@ -189,6 +214,8 @@ function App() {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid"
           columnClassName="my-masonry-grid_column"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
         >
           {notes.map((note, index) => (
             <Note
@@ -203,7 +230,7 @@ function App() {
               clientPos={clientPos}
               onDragStart={onNoteDragStart}
               onDragOver={(index: number) => setDraggedOnNote(index)}
-              onDragEnd={onNoteDragEnd}
+              onDrop={onNoteDragEnd}
               index={index}
             ></Note>
           ))}
