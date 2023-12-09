@@ -1,4 +1,10 @@
-import { addDoc, collection, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "./server/firebase";
 import { useEffect, useRef, useState } from "react";
 import { Note } from "./components/Note/Note";
@@ -167,7 +173,11 @@ function App() {
           </div>
         ) : (
           <div className="button_menu">
-            <Button onClick={addDummyData} text="Add dummy data" type="primary"></Button>
+            <Button
+              onClick={addDummyData}
+              text="Add dummy data"
+              type="primary"
+            ></Button>
 
             <Button
               text="New note"
@@ -193,8 +203,10 @@ function App() {
           {notes.map((note, index) => (
             <Note
               {...note}
-              onSelected={handleNoteSelected}
-              onClick={(e: React.MouseEvent) => {
+              handleChange={(e: React.ChangeEvent) => {
+                handleNoteSelected(note.id);
+              }}
+              handleClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 toggleShowModal();
                 setModalContent("EDIT_NOTE");
@@ -208,21 +220,6 @@ function App() {
             ></Note>
           ))}
         </Masonry>
-
-        {/* <div className="Notes" ref={notesRef}>
-          {notes.map((note) => (
-            <Note
-              {...note}
-              onSelected={handleNoteSelected}
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                toggleShowModal();
-                setModalContent("EDIT_NOTE");
-                setEditingNote(note);
-              }}
-            ></Note>
-          ))}
-        </div> */}
       </main>
     </div>
   );

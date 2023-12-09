@@ -3,8 +3,8 @@ import type { NoteData } from "../../App";
 import { useEffect, useRef } from "react";
 
 type NoteProps = NoteData & {
-  onSelected: (id: string) => void;
-  onClick: (e: React.MouseEvent) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleClick: (e: React.MouseEvent) => void;
   clientPos: { x: number; y: number } | undefined;
   onDragStart: (id: number) => void;
   onDragOver: (id: number) => void;
@@ -18,18 +18,18 @@ export function Note({
   body,
   created,
   selected,
-  onSelected,
-  onClick,
+  handleClick,
+  handleChange,
 
   onDragStart,
   onDragOver,
   onDragEnd,
   index,
 }: NoteProps) {
-  function handleClick(e: React.MouseEvent) {
-    e.stopPropagation();
-    onSelected(id);
-  }
+  // function handleClickf(e: React.MouseEvent) {
+  //   e.stopPropagation();
+  //   onSelected(id);
+  // }
 
   const noteRef = useRef<HTMLUListElement>(null);
 
@@ -57,17 +57,17 @@ export function Note({
   return (
     <ul
       className="Note"
-      onClick={onClick}
       ref={noteRef}
       draggable
       onDragStart={(e) => onDragStart(index)}
       onDragEnd={(e) => onDragEnd()}
       onDragOver={(e) => onDragOver(index)}
       style={styleObj}
+      onClick={handleClick}
     >
       <li className="Note-header">
         <h3>{title}</h3>
-        <input type="checkbox" checked={selected} onClick={handleClick} />
+        <input type="checkbox" checked={selected} onChange={handleChange} />
       </li>
       <li>{body}</li>
       <li className="Note-created">{created}</li>
