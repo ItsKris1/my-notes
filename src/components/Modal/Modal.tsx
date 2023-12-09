@@ -1,12 +1,20 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
 import "./Modal.css";
 
-export function Modal({ children, onModalClose }: PropsWithChildren<{ onModalClose: () => void }>) {
+export function Modal({
+  children,
+  onModalClose,
+}: PropsWithChildren<{ onModalClose: () => void }>) {
   const childrenRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (childrenRef.current && !childrenRef.current.contains(e.target as Node)) {
+      if (
+        childrenRef.current &&
+        !childrenRef.current.contains(e.target as Node)
+      ) {
+        console.log(e.target);
+        console.log("lol");
         onModalClose();
       }
     }

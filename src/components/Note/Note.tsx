@@ -6,9 +6,9 @@ type NoteProps = NoteData & {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleClick: (e: React.MouseEvent) => void;
   clientPos: { x: number; y: number } | undefined;
-  onDragStart: (id: number) => void;
-  onDragOver: (id: number) => void;
-  onDragEnd: () => void;
+  onDragStart?: (id: number) => void;
+  onDragOver?: (id: number) => void;
+  onDragEnd?: () => void;
   index: number;
 };
 
@@ -59,15 +59,20 @@ export function Note({
       className="Note"
       ref={noteRef}
       draggable
-      onDragStart={(e) => onDragStart(index)}
-      onDragEnd={(e) => onDragEnd()}
-      onDragOver={(e) => onDragOver(index)}
+      // onDragStart={(e) => onDragStart(index)}
+      // onDragEnd={(e) => onDragEnd()}
+      // onDragOver={(e) => onDragOver(index)}
       style={styleObj}
       onClick={handleClick}
     >
       <li className="Note-header">
         <h3>{title}</h3>
-        <input type="checkbox" checked={selected} onChange={handleChange} />
+        <input
+          type="checkbox"
+          checked={selected}
+          onClick={(e) => e.stopPropagation()}
+          onChange={handleChange}
+        />
       </li>
       <li>{body}</li>
       <li className="Note-created">{created}</li>

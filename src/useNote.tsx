@@ -16,11 +16,14 @@ export function useNotes(): [
 
       if (!querySnapShot.metadata.hasPendingWrites) {
         querySnapShot.forEach((doc) => {
+          let timeString = new Date(
+            doc.data().created.seconds * 1000
+          ).toLocaleDateString();
           newNotes.push({
             ...(doc.data() as NoteData),
             id: doc.id,
             selected: false,
-            created: "",
+            created: timeString,
           });
         });
 

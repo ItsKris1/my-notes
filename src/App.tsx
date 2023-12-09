@@ -38,6 +38,8 @@ function App() {
 
   const [editingNote, setEditingNote] = useState<NoteData | null>(null);
 
+  // console.log("editingNote", editingNote);
+
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>();
 
@@ -122,6 +124,7 @@ function App() {
   }
 
   function toggleShowModal() {
+    console.log("toggleShowModal", showModal);
     setShowModal(!showModal);
   }
 
@@ -135,6 +138,8 @@ function App() {
     });
   }
 
+  // console.log("selectedNote", selected);
+
   const breakpointColumnsObj = {
     default: 3,
     1700: 2,
@@ -143,7 +148,7 @@ function App() {
   return (
     <div className="App">
       {showModal && (
-        <Modal onModalClose={toggleShowModal}>
+        <Modal onModalClose={() => {}}>
           {modalContent === "ADD_NOTE" ? (
             <AddNote onSubmit={toggleShowModal}></AddNote>
           ) : (
@@ -203,19 +208,24 @@ function App() {
           {notes.map((note, index) => (
             <Note
               {...note}
+              key={note.id}
               handleChange={(e: React.ChangeEvent) => {
+                console.log("change event");
                 handleNoteSelected(note.id);
               }}
               handleClick={(e: React.MouseEvent) => {
+                console.log("click event");
                 e.stopPropagation();
-                toggleShowModal();
-                setModalContent("EDIT_NOTE");
+
+                // toggleShowModal();
+                setShowModal(!showModal);
+                // setModalContent("EDIT_NOTE");
                 setEditingNote(note);
               }}
               clientPos={clientPos}
-              onDragStart={onNoteDragStart}
-              onDragOver={(index: number) => setDraggedOnNote(index)}
-              onDragEnd={onNoteDragEnd}
+              // onDragStart={onNoteDragStart}
+              // onDragOver={(index: number) => setDraggedOnNote(index)}
+              // onDragEnd={onNoteDragEnd}
               index={index}
             ></Note>
           ))}
