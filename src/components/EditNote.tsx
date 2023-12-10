@@ -36,9 +36,19 @@ export function EditNote({ note, onSubmit }: EditNoteProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input
+        type="text"
+        name="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-      <textarea name="body" value={body} className="Note-body" onChange={(e) => setBody(e.target.value)} />
+      <textarea
+        name="body"
+        value={body}
+        className="Note-body"
+        onChange={(e) => setBody(e.target.value)}
+      />
 
       <Button type="primary" text="Save changes" onClick={() => {}}></Button>
     </form>

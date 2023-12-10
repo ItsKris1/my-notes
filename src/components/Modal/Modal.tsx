@@ -13,8 +13,6 @@ export function Modal({
         childrenRef.current &&
         !childrenRef.current.contains(e.target as Node)
       ) {
-        console.log(e.target);
-        console.log("lol");
         onModalClose();
       }
     }

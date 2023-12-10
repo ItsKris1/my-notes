@@ -42,24 +42,3 @@
   padding: 5px;
   border-bottom: 2px solid rgb(129, 136, 47);
 }
-
-/* .ModalContent form div:nth-child(2) {
-  flex: 1;
-} */
-
-/* .ModalContent input,
-.ModalContent textarea {
-  background-color: transparent;
-  border: none;
-  padding-bottom: 5px;
-  border-bottom: 2px solid rgb(129, 136, 47);
-} */
-
-/* .ModalContent textarea {
-  resize: none;
-} */
-
-/* .ModalContent textarea:focus-visible,
-.ModalContent input:focus-visible {
-  outline: none;
-} */

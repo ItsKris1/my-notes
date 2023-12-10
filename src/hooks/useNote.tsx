@@ -1,7 +1,7 @@
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "./server/firebase";
-import { NoteData } from "./App";
+import { db } from "../server/firebase";
+import { NoteData } from "../App";
 
 export function useNotes(): [
   NoteData[],

@@ -1,12 +1,6 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "./server/firebase";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Note } from "./components/Note/Note";
 import { Button } from "./components/Button/Button";
 import { AddNote } from "./components/AddNote";
@@ -14,12 +8,11 @@ import { Modal } from "./components/Modal/Modal";
 import { EditNote } from "./components/EditNote";
 import { ReactComponent as TrashLogo } from "./icons/trash_icon.svg";
 import { ReactComponent as PlusLogo } from "./icons/plus_icon.svg";
-import { useNotes } from "./useNote";
+import { useNotes } from "./hooks/useNote";
 import { dummyNotesData } from "./dummyData";
+import "./App.css";
 
 import Masonry from "react-masonry-css";
-
-//...
 
 export interface NoteData {
   id: string;
@@ -33,29 +26,20 @@ type ModalContent = "EDIT_NOTE" | "ADD_NOTE";
 
 function App() {
   const [notes, setNotes] = useNotes();
-
   const [selectAllNotes, setSelectAllNotes] = useState<boolean>(false);
-
   const [editingNote, setEditingNote] = useState<NoteData | null>(null);
-
-  // console.log("editingNote", editingNote);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>();
 
-  const [clientPos, setClientPos] = useState<{ x: number; y: number }>();
-
-  const notesRef = useRef<HTMLDivElement>(null);
   const [draggableNote, setDraggableNote] = useState<number>();
   const [draggedOnNote, setDraggedOnNote] = useState<number>();
 
   function onNoteDragStart(noteId: number) {
-    console.log("Dragging note: ", noteId);
     setDraggableNote(noteId);
   }
 
   function onNoteDragEnd() {
-    console.log("dragged to", draggedOnNote);
     if (draggableNote === draggedOnNote) {
       return;
     }
@@ -76,18 +60,6 @@ function App() {
       })
     );
   }
-
-  useEffect(() => {
-    // const fn = (e: DragEvent) => console.log(e);
-    // if (document !== null) {
-    //   document.addEventListener("dragover", (e: DragEvent) => {
-    //     setClientPos({ x: e.clientX, y: e.clientY });
-    //   });
-    // }
-    // return () => document.removeEventListener("dragover", fn);
-  }, []);
-
-  const anyNoteSelected = notes.some((note) => note.selected === true);
 
   function handleNoteSelected(noteId: string) {
     setNotes(
@@ -124,7 +96,6 @@ function App() {
   }
 
   function toggleShowModal() {
-    console.log("toggleShowModal", showModal);
     setShowModal(!showModal);
   }
 
@@ -138,17 +109,18 @@ function App() {
     });
   }
 
-  // console.log("selectedNote", selected);
-
   const breakpointColumnsObj = {
     default: 3,
     1700: 2,
     1200: 1,
   };
+
+  const anyNoteSelected = notes.some((note) => note.selected === true);
+
   return (
     <div className="App">
       {showModal && (
-        <Modal onModalClose={() => {}}>
+        <Modal onModalClose={toggleShowModal}>
           {modalContent === "ADD_NOTE" ? (
             <AddNote onSubmit={toggleShowModal}></AddNote>
           ) : (
@@ -204,28 +176,25 @@ function App() {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid"
           columnClassName="my-masonry-grid_column"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => e.preventDefault()}
         >
           {notes.map((note, index) => (
             <Note
               {...note}
               key={note.id}
               handleChange={(e: React.ChangeEvent) => {
-                console.log("change event");
                 handleNoteSelected(note.id);
               }}
               handleClick={(e: React.MouseEvent) => {
-                console.log("click event");
                 e.stopPropagation();
-
-                // toggleShowModal();
-                setShowModal(!showModal);
-                // setModalContent("EDIT_NOTE");
+                toggleShowModal();
+                setModalContent("EDIT_NOTE");
                 setEditingNote(note);
               }}
-              clientPos={clientPos}
-              // onDragStart={onNoteDragStart}
-              // onDragOver={(index: number) => setDraggedOnNote(index)}
-              // onDragEnd={onNoteDragEnd}
+              onDragStart={onNoteDragStart}
+              onDragOver={(index: number) => setDraggedOnNote(index)}
+              onDragEnd={onNoteDragEnd}
               index={index}
             ></Note>
           ))}
